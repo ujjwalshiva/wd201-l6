@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="csrf-token" content="<%= csrfToken %>" />
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/styles.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        const updateTodoStatus = (id, completed) => {
+            fetch(`/todos/${id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    "_csrf": token,
+                    "completed": completed
+                }),
+            })
+                .then((data) => {
+                    window.location.reload();
+                });
+        }
+
+        const deleteTodo = (id) => {
+            fetch(`/todos/${id}`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    "_csrf": token
+                }),
+            })
+                .then((data) => {
+                    window.location.reload();
+                });
+        }
+    </script>
+</head>
+
+<body>
+    <div class="flex justify-center">
+        <div>
+            <%- include('header.ejs') %>
+                <% if(user){ %>
+                    <p>
+                        👋 Hello <%= user.firstName %>
+                            <a href="/signout" class="text-blue-400">
+                                Signout
+                            </a>
+                    </p>
+                    <% } %>
+
+                        <form action="/todos" method="post" class="flex gap-2 py-4">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                            <input type="text" name="title" placeholder="What's next?"
+                                class="border border-gray-400 text-gray-900 rounded p-2 text-sm flex-auto" />
+                            <input name="dueDate" type="date"
+                                class="border border-gray-400 text-gray-900 rounded p-2 text-sm flex-auto" />
+                            <button type="submit" class="text-white px-3 py-2 bg-green-600 rounded">
+                                Add
+                            </button>
+                        </form>
+                        <% if(messages && messages.error && messages.error.length> 0) { %>
+                            <% for(var i=0; i<messages.error.length; i++) { %>
+                                <li>
+                                    <%= messages.error[i] %>
+                                </li>
+                                <% } %>
+                                    <% } %>
+                                        <%- include('todo.ejs', {data : overdueTodos, title: "Overdue" }) %>
+                                            <%- include('todo.ejs', {data : dueTodayTodos, title: "Due Today" }) %>
+                                                <%- include('todo.ejs', {data : dueLaterTodos, title: "Due Later" }) %>
+                                                    <%- include('todo.ejs', {data : completedTodos,
+                                                        title: "Completed Items" }) %>
+        </div>
+    </div>
+</body>
+
+</html>

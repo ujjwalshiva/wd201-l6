@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="csrf-token" content="<%= csrfToken %>" />
+  <title>Document</title>
+  <link rel="stylesheet" href="./css/styles.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/js/tailcombinator.js"></script>
+  <script>
+    const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    const updateTodoStatus = (id, completed) => {
+      fetch(`/todos/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          "_csrf": token,
+          "completed": completed
+        }),
+      })
+        .then((data) => {
+          window.location.reload();
+        });
+    }
+
+    const deleteTodo = (id) => {
+      fetch(`/todos/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          "_csrf": token
+        }),
+      })
+        .then((data) => {
+          window.location.reload();
+        });
+    }
+  </script>
+</head>
+
+<body>
+  <div class="flex justify-center">
+    <div class="w-[300px]">
+      <%- include('header.ejs') %>
+        <p>
+          Welcome to my Todo App!
+        </p>
+        <a class="login-button" href="/signup">Signup</a>
+        <div class="text-center">
+          or
+        </div>
+        <a class="login-button" href="/login">Login</a>
+    </div>
+
+  </div>
+  <script>
+    tc.c(".login-button", "bg-blue-600 rounded p-2 block w-full text-white hover:bg-blue-700 transition mt-2 w-full text-center");
+  </script>
+
+</body>
+
+</html>
