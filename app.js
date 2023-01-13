@@ -1,3 +1,4 @@
+// Imports below
 const express = require("express");
 const csrf = require("tiny-csrf");
 const app = express();
@@ -5,22 +6,20 @@ const { Todo, User } = require("./models");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const path = require("path");
-
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const session = require("express-session");
 const connectEnsureLogin = require("connect-ensure-login");
 const bcrypt = require("bcrypt");
 const flash = require("connect-flash");
-
 const saltRounds = 10;
 
+// App use functions
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser("shh"));
 app.use(csrf("this_should_be_32_character_long", ["POST", "PUT", "DELETE"]));
 app.use(flash());
-
 app.use(
   session({
     secret: "my-super-secret-key-21728172615261562",
@@ -88,6 +87,7 @@ app.get("/", (req, res) => {
   }
 });
 
+// App GET Commands
 app.get(
   "/todos",
   connectEnsureLogin.ensureLoggedIn(),
