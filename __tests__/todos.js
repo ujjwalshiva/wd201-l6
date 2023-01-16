@@ -1,12 +1,14 @@
+//imports
 const request = require("supertest");
 const cheerio = require("cheerio");
 const db = require("../models/index");
 const app = require("../app");
 
+//variables
 let server, agent;
-
 let globalTodoId = 0;
 
+//csrf tokens
 const extractCSRFToken = (html) => {
   const $ = cheerio.load(html);
   return $("[name=_csrf]").val();
@@ -151,7 +153,7 @@ describe("Todo Application", function () {
     let csrfToken = extractCSRFToken(res.text);
 
     await agent.post("/todos").send({
-      title: "Buy xbox",
+      title: "Buy a mouse",
       dueDate: new Date().toISOString(),
       _csrf: csrfToken,
     });
@@ -160,7 +162,7 @@ describe("Todo Application", function () {
     const parsedResponse = JSON.parse(response.text);
 
     expect(parsedResponse.length).toBe(3);
-    expect(parsedResponse[2].title).toBe("Buy xbox");
+    expect(parsedResponse[2].title).toBe("Buy a mouse");
   });
 
   test("Deletes a todo with the given ID", async () => {

@@ -29,11 +29,13 @@ app.use(
   })
 );
 
+//connect-flash
 app.use(function (request, response, next) {
   response.locals.messages = request.flash();
   next();
 });
 
+// passport serialize
 app.use(passport.initialize());
 app.use(passport.session());
 
